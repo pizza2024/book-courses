@@ -3,6 +3,7 @@ import cors from 'cors';
 import express, { NextFunction, Response } from 'express';
 import { Request, expressjwt } from 'express-jwt';
 import routes from './src/routes';
+import { each } from 'lodash';
 
 const port = 3000;
 
@@ -17,8 +18,8 @@ app.use('/api', expressjwt({
   algorithms: ['HS512']
 }))
 
-routes.forEach(route => {
-  app.use(route.getPrefix(), route.getRouter())
+each(routes, route => {
+  app.use(route.getRoute())
 })
 
 app.use((req, res) => {
