@@ -1,6 +1,6 @@
 import UserRoute from "./UserRoute";
 const userRouter = new UserRoute('/user')
-userRouter.setPrefix('/api')
+userRouter.setPrefix('/test')
 const routes = [
   userRouter
 ]

@@ -6,6 +6,7 @@ class UserRoute extends ApiRoute {
   constructor(path: string, prefix?: string) {
     super(new UserController(), path)
     this.prefix = prefix || '';
+    this.setRouter()
   }
   public getRouter() {
     return this.router
@@ -15,6 +16,10 @@ class UserRoute extends ApiRoute {
   }
   public getPrefix() {
     return this.prefix
+  }
+  protected setRouter() {
+    this.router.get('/list', (req, res) => res.json({success: true, msg: 'hi'}))
+    super.setRouter()
   }
 }
 
