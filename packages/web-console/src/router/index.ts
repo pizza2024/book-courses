@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
+import UserView from '../views/UserView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -16,6 +17,11 @@ const router = createRouter({
       component: LoginView
     },
     {
+      path: '/user',
+      name: 'user',
+      component: UserView
+    },
+    {
       path: '/about',
       name: 'about',
       // route level code-splitting
@@ -24,6 +30,14 @@ const router = createRouter({
       component: () => import('../views/AboutView.vue')
     }
   ]
+})
+
+router.beforeEach(async (to, from) => {
+  if (!localStorage.getItem('book.token') && to.name !== 'login') {
+    return {
+      name: 'login'
+    }
+  }
 })
 
 export default router

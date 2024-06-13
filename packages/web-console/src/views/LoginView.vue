@@ -14,6 +14,7 @@ function login() {
   apiLogin(data).then(res => {
     if (res.data.success) {
       tokenStore.setToken(res.data.token)
+      localStorage.setItem('book.token', res.data.token)
       router.push('/')
     }
   })
@@ -21,7 +22,7 @@ function login() {
 </script>
 
 <template>
-  <main>
+  <main class="fixed">
     <el-form label-width="100px">
       <el-form-item label="username">
         <el-input v-model="data.username"></el-input>
@@ -35,3 +36,17 @@ function login() {
     </el-form>    
   </main>
 </template>
+
+<style lang="scss" scoped>
+.fixed {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  background: #FFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+</style>
