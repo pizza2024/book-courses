@@ -10,7 +10,7 @@
   </ElRow>
   <ElRow>
     <ElCol :span="24">
-      <ElTable border :data="state.tableData">
+      <ElTable border :data="state.tableData" stripe :size="'small'" highlight-current-row>
         <ElTableColumn :key="col.label" v-for="col in tableColumns" v-bind="col">
           <template v-if="col.prop === 'is_active'" #default="scope">
             <el-icon v-if="scope.row.is_active === 1"><Check /></el-icon>
