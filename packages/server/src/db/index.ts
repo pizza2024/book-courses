@@ -1,4 +1,4 @@
-import { Test } from '../../../web-console/types/index';
+import { Test } from '../../../web-console/src/types';
 import pool from "./connection-pool";
 export const queryAllUsers = async () => {
   const test: Test = {
