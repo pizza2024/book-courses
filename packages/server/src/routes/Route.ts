@@ -1,5 +1,5 @@
+import { Router } from "express";
 import AuthController from "../controllers/AuthController";
-import {Router} from "express";
 class Route {
     protected router;
     protected controller;

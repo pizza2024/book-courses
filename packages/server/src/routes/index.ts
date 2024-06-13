@@ -4,9 +4,9 @@ import UserController from "../controllers/UserController";
 import Route from "./Route";
 
 const routes = [
-    new Route('/user', new UserController()),
-    new Route('/teacher', new TeacherController()),
-    new Route('/login', new LoginController())
+    new Route('/api/user', new UserController()),
+    new Route('/api/teacher', new TeacherController()),
+    new Route('/api/login', new LoginController())
 ]
 
 export default routes

@@ -2,8 +2,8 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import express, { NextFunction, Response } from 'express';
 import { Request, expressjwt } from 'express-jwt';
-import routes from './src/routes';
 import { each } from 'lodash';
+import routes from './src/routes';
 
 const port = 3000;
 
@@ -15,7 +15,9 @@ app.use(bodyParser.json())
 
 app.use('/api', expressjwt({
   secret: 'helloworld',
-  algorithms: ['HS512']
+  algorithms: ['HS512'],
+}).unless({
+  path: [/^\/api\/login/]
 }))
 
 each(routes, route => {
