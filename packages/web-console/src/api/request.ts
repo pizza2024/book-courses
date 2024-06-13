@@ -1,3 +1,4 @@
+import router from '@/router';
 import axios from 'axios';
 import { ElNotification } from 'element-plus';
 
@@ -21,6 +22,13 @@ request.interceptors.response.use((res) => {
   if (e.response?.status === 401) {
     ElNotification.warning({
       title: '请登录'
+    })
+    localStorage.removeItem('book.token')
+    router.replace('/login')
+  } else {
+    ElNotification.error({
+      title: e.response.status,
+      message: e.response.data.msg
     })
   }
   return e.response

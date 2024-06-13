@@ -12,7 +12,7 @@ class LoginController extends AuthController {
         if (data.username === 'admin' && data.password === '123') {
             const token = jwt.sign({
                 username: data.username
-            }, 'helloworld', {algorithm: 'HS512', expiresIn: 10})
+            }, 'helloworld', {algorithm: 'HS512', expiresIn: 60 * 60 * 8})
             res.json({
                 success: true,
                 token: token,
