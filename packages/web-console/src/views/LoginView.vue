@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { apiLogin } from '@/api';
+import { useTokenStore } from '@/stores/token';
 import { ElButton } from 'element-plus';
 import { reactive } from 'vue';
+import { useRouter } from 'vue-router';
+const tokenStore = useTokenStore()
+const router = useRouter()
 const data = reactive({
   username: '',
   password: '',
@@ -9,7 +13,8 @@ const data = reactive({
 function login() {
   apiLogin(data).then(res => {
     if (res.data.success) {
-      console.log(res.data)
+      tokenStore.setToken(res.data.token)
+      router.push('/')
     }
   })
 }

@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue';
+import { useTokenStore } from '@/stores/token';
+
+const tokenStore = useTokenStore()
 </script>
 
 <template>
   <main>
-    <TheWelcome />
+    {{ tokenStore }}
   </main>
 </template>
