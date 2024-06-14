@@ -6,5 +6,5 @@
   "author": "tzy <tangzy2021@gmail.com>",
   "homepage": "",
   "license": "ISC",
-  "types": "./types/index.d.ts"
+  "types": "./index.ts"
 }

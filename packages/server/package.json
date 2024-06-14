@@ -10,6 +10,7 @@
   ],
   "scripts": {
     "start": "nodemon app.ts",
+    "init": "ts-node initdb.ts",
     "build": "tsc --project ./"
   },
   "devDependencies": {

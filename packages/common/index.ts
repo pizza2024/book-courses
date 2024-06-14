@@ -1,16 +1,2 @@
-export type Test = {
-  hello: 'world'
-}
-
-export type User = {
-  id: number;
-  username: string;
-  email: string;
-  birthdate: string;
-  is_active: boolean;
-}
-
-export type LoginData = {
-  username: string;
-  password: string;
-}
+export * from './src/modal';
+export * from './src/request-params';
