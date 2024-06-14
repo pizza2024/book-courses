@@ -1,0 +1,10 @@
+{
+  "name": "common",
+  "version": "0.0.0",
+  "main": "index.ts",
+  "description": "> TODO: description",
+  "author": "tzy <tangzy2021@gmail.com>",
+  "homepage": "",
+  "license": "ISC",
+  "types": "./types/index.d.ts"
+}
