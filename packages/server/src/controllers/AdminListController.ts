@@ -1,14 +1,14 @@
 import { NextFunction, Response } from "express";
 import { Request } from "express-jwt";
-import { queryAllUsers } from "../db";
+import { queryAdmin } from "../db";
 import AuthController from "./AuthController";
 
-class UserListController extends AuthController {
+class AdminListController extends AuthController {
   get(req: Request, res: Response<any, Record<string, any>>, next: NextFunction): void {
-    queryAllUsers().then(users => {
+    queryAdmin().then(rows => {
       res.json({
         success: true,
-        users
+        rows
       })
     }).catch(e => {
       res.json({
@@ -28,4 +28,4 @@ class UserListController extends AuthController {
     throw new Error("Method not implemented.");
   }
 }
-export default UserListController
+export default AdminListController

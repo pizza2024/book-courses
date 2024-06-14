@@ -9,16 +9,10 @@
         <span>home</span>
       </el-menu-item>
     </RouterLink>
-    <!-- <RouterLink to="/login" :class="'menu-link'">
-      <el-menu-item index="login">
+    <RouterLink to="/admin" :class="'menu-link'">
+      <el-menu-item index="admin">
         <el-icon><icon-menu /></el-icon>
-        <span>login</span>
-      </el-menu-item>
-    </RouterLink> -->
-    <RouterLink to="/user" :class="'menu-link'">
-      <el-menu-item index="user">
-        <el-icon><icon-menu /></el-icon>
-        <span>user</span>
+        <span>admin</span>
       </el-menu-item>
     </RouterLink>
     <RouterLink to="/about" :class="'menu-link'">
