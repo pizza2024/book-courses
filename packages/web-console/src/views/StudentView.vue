@@ -1,11 +1,18 @@
 <template>
-  <ElRow>
-    <ElCol :span="12">
-      <ElForm>
-        <ElFormItem>
-          <ElInput></ElInput>
-        </ElFormItem>
-      </ElForm>
+  <ElRow style="margin: 0 0px 10px">
+    <ElCol gutter="10px">
+      <ElButton @click="dialogFormVisible = true">Add Student</ElButton>
+      <ElDialog v-model="dialogFormVisible" title="新建学生信息" @close="resetForm(formRef)">
+        <ElForm :model="formStudent" ref="formRef" label-width="100px">
+          <ElFormItem v-for="(val, key) in formStudent" :key="key" :prop="key" :label="key">
+            <ElInput :type="key === 'password' ? 'password' : ''" :placeholder="key" v-model="formStudent[key]"></ElInput>
+          </ElFormItem>
+          <ElFormItem>
+            <ElButton type="primary">Submit</ElButton>
+            <ElButton @click="resetForm(formRef)">reset</ElButton>
+          </ElFormItem>
+        </ElForm>
+      </ElDialog>
     </ElCol>
   </ElRow>
   <ElRow>
@@ -24,10 +31,11 @@
 </template>
 <script setup lang="ts">
 import { apiStudentList } from '@/api';
-import type { ModalStudent } from 'common';
-import { ElForm, ElFormItem, ElInput, ElTable, ElTableColumn } from 'element-plus';
+import type { ModalStudent, User } from 'common';
+import { ElButton, ElForm, ElFormItem, ElInput, ElTable, ElTableColumn, type FormInstance } from 'element-plus';
 import { keys } from 'lodash';
-import { computed, onMounted, reactive } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
+type FormStudentType = Omit<User, 'id'> & { password: string };
 const state = reactive<{tableData: ModalStudent[]}>({
   tableData: []
 })
@@ -47,4 +55,18 @@ onMounted(() => {
     }
   })
 })
+const dialogFormVisible = ref(false)
+const DEFUALT_FORM_STUDENT:FormStudentType = {
+  username: '',
+  password: '',
+  nickname: '',
+  email: '',
+  phone: '',
+}
+const formStudent = reactive<FormStudentType>(DEFUALT_FORM_STUDENT)
+const formRef = ref<FormInstance>()
+const resetForm = (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  formEl.resetFields()
+}
 </script>
