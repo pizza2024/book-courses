@@ -8,4 +8,4 @@ export type LoginData = {
 
 export type FormStudentType = Omit<User, 'id'> & { password: string };
 export type FormTeacherType = Omit<User, 'id'> & { password: string };
-export type FormCourseType = Omin<ModalCourse, 'id'>;
+export type FormCourseType = Omit<ModalCourse, 'id'>;

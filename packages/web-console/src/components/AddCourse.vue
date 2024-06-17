@@ -11,8 +11,7 @@ const DEFAULT_FORM_COURSE: FormCourseType = {
 }
 const formCourse = reactive<FormCourseType>(DEFAULT_FORM_COURSE)
 const formCourseRules = reactive<FormRules<typeof formCourse>>({
-  username: [{ required: true, min: 6, message: '用户名需要6个字符以上', trigger: 'change' }],
-  password: [{ required: true, min: 6, message: '密码需要6个字符以上', trigger: 'change' }],
+  name: [{ required: true, message: '请输入课程名', trigger: 'change' }],
 })
 const formRef = ref<FormInstance>()
 const resetForm = (formEl: FormInstance | undefined) => {

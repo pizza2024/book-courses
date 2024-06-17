@@ -1,5 +1,5 @@
 
-import type { FormCourseType, FormStudentType, FormTeacherType, LoginData, ModalAdmin, ModalCourse, ModalPublishedCourse, ModalStudent, ModalTeacher } from "common";
+import type { FormCourseType, FormStudentType, FormTeacherType, LoginData, ModalAdmin, ModalCourse, ModalStudent, ModalTeacher, TypePublishedCourse } from "common";
 import request from "./request";
 export const apiLogin = (data: LoginData) => request.post('/api/login', data)
 export const apiAdminList = () => request.get<{ success: Boolean; rows: ModalAdmin[] }>('/api/adminlist')
@@ -9,4 +9,4 @@ export const apiTeacherList = () => request.get<{ success: Boolean;  rows: Modal
 export const apiPostTeacher = (data: FormTeacherType) => request.post<{ success: Boolean; teacher: ModalTeacher }>('/api/teacher', data)
 export const apiCourseList = () => request.get<{ success: Boolean;  rows: ModalCourse[]}>('/api/courselist')
 export const apiPostCourse = (data: FormCourseType) => request.post<{ success: Boolean; course: ModalCourse }>('/api/course', data)
-export const apiPublishedCourseList = () => request.get<{ success: Boolean;  rows: ModalPublishedCourse[]}>('/api/publishedCourseList')
+export const apiPublishedCourseList = () => request.get<{ success: Boolean;  rows: TypePublishedCourse[]}>('/api/publishedCourseList')

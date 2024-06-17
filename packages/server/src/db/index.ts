@@ -71,6 +71,24 @@ export const queryPostCourse = async (data: FormCourseType) => {
   }
 }
 export const queryPublishedCourse = async () => {
-  const [res] = await pool.query(`select * from publishedCourse`)
+  const [res] = await pool.query(`select
+    c.name as courseName,
+    t.username as teacherName,
+    p.classRoom as classRoom,
+    p.launchTime as launchTime,
+    p.removeTime as removeTime,
+    p.isOpen as isOpen,
+    p.canJoin as canJoin,
+    a.username as adminName
+  from
+    publishedCourse as p,
+    teacher as t,
+    course as c,
+    admin as a
+  where
+    p.courseId = c.id and
+    p.teacherId = t.id and
+    p.adminId = a.id
+    `)
   return res;
 }
