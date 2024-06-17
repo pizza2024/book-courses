@@ -9,15 +9,7 @@ class StudentController extends AuthController {
     throw new Error("Method not implemented.");
   }
   post(req: Request, res: Response<any, Record<string, any>>, next: NextFunction): void {
-    console.log(req.body)
-    console.log(req.auth)
-    if (req.auth?.type !== 'admin') {
-      res.json({
-        success: false,
-        msg: 'admin 才可以添加学生信息'
-      })
-    } else {
-      const adminId = req.auth?.id;
+    const adminId = req.auth?.id;
       if (!adminId) {
         res.json({
           success: false,
@@ -48,7 +40,6 @@ class StudentController extends AuthController {
         })
         
       }
-    }
   }
   put(req: Request, res: Response<any, Record<string, any>>, next: NextFunction): void {
     throw new Error("Method not implemented.");

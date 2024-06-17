@@ -1,24 +1,46 @@
 import { NextFunction, Response } from "express";
 import { Request } from "express-jwt";
-import { queryTeacher } from "../db";
+import { get, isArray } from "lodash";
+import { queryPostTeacher } from "../db";
 import AuthController from "./AuthController";
 
 class TeacherController extends AuthController {
   get(req: Request, res: Response<any, Record<string, any>>, next: NextFunction): void {
-    queryTeacher().then(rows => {
-      res.json({
-        success: true,
-        rows
-      })
-    }).catch(e => {
-      res.json({
-        success: false,
-        msg: e.toString()
-      })
-    })
+    throw new Error("Method not implemented.");
   }
   post(req: Request, res: Response<any, Record<string, any>>, next: NextFunction): void {
-    throw new Error("Method not implemented.");
+    const adminId = req.auth?.id;
+      if (!adminId) {
+        res.json({
+          success: false,
+          msg: "缺少admin id"
+        })
+      } else {
+        queryPostTeacher({
+          ...req.body,
+          adminId: req.auth?.id
+        }).then(result => {
+          if (isArray(result) && get(result, '0.affectedRows') === 1) {
+            res.json({
+              success: true,
+              student: req.body,
+              adminId: req.auth?.id
+            })
+          } else {
+            res.json({
+              success: false,
+              msg: get(result, 'message')
+            })
+          }
+        }).catch(e => {
+          res.json({
+            success: false,
+            msg: e.toString()
+          })
+        })
+        
+      }
+
   }
   put(req: Request, res: Response<any, Record<string, any>>, next: NextFunction): void {
     throw new Error("Method not implemented.");
