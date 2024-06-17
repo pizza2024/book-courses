@@ -35,6 +35,8 @@ function login() {
       loginStore.setUsername(res.data.username)
       loginStore.setToken(res.data.token)
       loginStore.setLoginType(res.data.type)
+      localStorage.setItem('book.username', res.data.username)
+      localStorage.setItem('book.loginType', res.data.type)
       localStorage.setItem('book.token', res.data.token)
       router.push('/')
     }

@@ -1,3 +1,4 @@
+import { ModalStudent } from "common";
 import pool from "./connection-pool";
 export const queryAdmin = async () => {
   const [res] = await pool.query(`select a.username, a.email, r.name from admin as a, adminRole as r where a.adminRoleId = r.id`)
@@ -14,6 +15,20 @@ export const queryStudent = async () => {
 export const queryStudentByUsername = async (username: string) => {
   const [res] = await pool.query(`select s.username, s.password, s.email, s.phone, s.nickname, a.nickname as adminNickname from student as s, admin as a where s.username = "${username}" and s.adminId = a.id`);
   return res;
+}
+export const queryPostStudent = async (data: ModalStudent) => {
+  const connection = await pool.getConnection();
+  try {
+    await connection.beginTransaction();
+    const res = await connection.query(`insert into student set ?`, data);
+    await connection.commit();
+    await connection.release();
+    return res
+  } catch (e) {
+    await connection.rollback()
+    return e
+  }
+  
 }
 export const queryTeacher = async () => {
   const [res] = await pool.query(`select username, email, nickname from teacher`)

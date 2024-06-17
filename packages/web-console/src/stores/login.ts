@@ -12,7 +12,7 @@ export const useLoginStore = defineStore('login', () => {
     username.value = _username
   }
 
-  const loginType = ref();
+  const loginType = ref(localStorage.getItem('book.loginType'));
   function setLoginType(_logintype: string) {
     loginType.value = _logintype;
   }
