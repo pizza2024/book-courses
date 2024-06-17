@@ -1,3 +1,4 @@
+import { useLoginStore } from '@/stores/login'
 import AdminView from '@/views/AdminView.vue'
 import PublishedCourseView from '@/views/PublishedCourseView.vue'
 import StudentView from '@/views/StudentView.vue'
@@ -17,12 +18,22 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: LoginView
+      component: LoginView,
+      redirect: '/login/student',
+      children: [
+        { path: 'student', name: 'loginstudent', component: LoginView },
+        { path: 'admin', name: 'loginadmin', component: LoginView },
+        { path: 'teacher', name: 'loginteacher', component: LoginView}
+      ]
     },
     {
       path: '/admin',
       name: 'admin',
-      component: AdminView
+      component: AdminView,
+      beforeEnter(to, from) {
+        const login = useLoginStore()
+        return login.loginType === 'admin'
+      }
     },
     {
       path: '/student',
@@ -52,8 +63,8 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach(async (to, from) => {
-  if (!localStorage.getItem('book.token') && to.name !== 'login') {
+router.beforeEach(async (to) => {
+  if (!localStorage.getItem('book.token') && !to.fullPath.startsWith('/login')) {
     return {
       name: 'login'
     }

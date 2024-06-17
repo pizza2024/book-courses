@@ -1,8 +1,16 @@
 <script setup lang="ts">
-import { useTokenStore } from '@/stores/token';
+import { useLoginStore } from '@/stores/login';
 import { ElCol, ElRow, type ElContainer } from 'element-plus';
-
-const tokenStore = useTokenStore()
+import { useRouter } from 'vue-router';
+const router = useRouter()
+const loginStore = useLoginStore()
+function signout() {
+  loginStore.token = null;
+  localStorage.clear();
+  router.replace({
+    name: 'login'
+  })
+}
 </script>
 
 <template>
@@ -10,8 +18,11 @@ const tokenStore = useTokenStore()
     <ElRow>
       <ElCol>
         <p>
-          {{ tokenStore }}
+          {{ loginStore.username }}
         </p>
+      </ElCol>
+      <ElCol>
+        <ElButton @click="signout">sign out</ElButton>
       </ElCol>
     </ElRow>
   </ElContainer>

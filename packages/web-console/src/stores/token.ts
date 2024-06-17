@@ -6,6 +6,5 @@ export const useTokenStore = defineStore('token', () => {
   function setToken(_token: string) {
     token.value = _token
   }
-
   return { token, setToken }
 })
