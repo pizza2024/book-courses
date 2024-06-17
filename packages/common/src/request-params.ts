@@ -1,4 +1,4 @@
-import { User } from "./modal";
+import { ModalCourse, User } from "./modal";
 
 export type LoginData = {
   type: 'student' | 'teacher' | 'admin'
@@ -8,3 +8,4 @@ export type LoginData = {
 
 export type FormStudentType = Omit<User, 'id'> & { password: string };
 export type FormTeacherType = Omit<User, 'id'> & { password: string };
+export type FormCourseType = Omin<ModalCourse, 'id'>;

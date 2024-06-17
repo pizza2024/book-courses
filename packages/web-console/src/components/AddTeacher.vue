@@ -50,5 +50,4 @@ const addTeacher = async (formEl: FormInstance | undefined) => {
     </ElFormItem>
   </ElForm>
 </ElDialog>
-</template>import type { User } from '@element-plus/icons-vue';
-, FormRules
+</template>

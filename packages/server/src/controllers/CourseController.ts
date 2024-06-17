@@ -1,10 +1,10 @@
 import { NextFunction, Response } from "express";
 import { Request } from "express-jwt";
 import { get, isArray } from "lodash";
-import { queryPostTeacher } from "../db";
+import { queryPostCourse } from "../db";
 import AuthController from "./AuthController";
 
-class TeacherController extends AuthController {
+class CourseController extends AuthController {
   get(req: Request, res: Response<any, Record<string, any>>, next: NextFunction): void {
     throw new Error("Method not implemented.");
   }
@@ -16,14 +16,14 @@ class TeacherController extends AuthController {
           msg: "缺少admin id"
         })
       } else {
-        queryPostTeacher({
+        queryPostCourse({
           ...req.body,
           adminId: req.auth?.id
         }).then(result => {
           if (isArray(result) && get(result, '0.affectedRows') === 1) {
             res.json({
               success: true,
-              teacher: req.body,
+              course: req.body,
               adminId: req.auth?.id
             })
           } else {
@@ -40,7 +40,6 @@ class TeacherController extends AuthController {
         })
         
       }
-
   }
   put(req: Request, res: Response<any, Record<string, any>>, next: NextFunction): void {
     throw new Error("Method not implemented.");
@@ -49,4 +48,4 @@ class TeacherController extends AuthController {
     throw new Error("Method not implemented.");
   }
 }
-export default TeacherController
+export default CourseController

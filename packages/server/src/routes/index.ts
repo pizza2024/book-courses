@@ -1,6 +1,7 @@
 import { NextFunction, Response } from 'express';
 import { Request } from "express-jwt";
 import AdminListController from "../controllers/AdminListController";
+import CourseController from '../controllers/CourseController';
 import CourseListController from "../controllers/CourseListController";
 import LoginController from "../controllers/LoginController";
 import PublishedCourseListController from "../controllers/PublishedCourseListController";
@@ -26,7 +27,8 @@ const routes = [
     new Route('/api/teacherlist', new TeacherListController(), onlyAdmin(['admin'])),
     new Route('/api/student', new StudentController(), onlyAdmin(['admin'])),
     new Route('/api/studentlist', new StudentListController(), onlyAdmin(['admin'])),
-    new Route('/api/courselist', new CourseListController()),
+    new Route('/api/course', new CourseController(), onlyAdmin(['admin'])),
+    new Route('/api/courselist', new CourseListController(), onlyAdmin(['admin'])),
     new Route('/api/publishedCourseList', new PublishedCourseListController())
 ]
 

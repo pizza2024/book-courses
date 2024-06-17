@@ -1,11 +1,7 @@
 <template>
-  <ElRow>
-    <ElCol :span="12">
-      <ElForm>
-        <ElFormItem>
-          <ElInput></ElInput>
-        </ElFormItem>
-      </ElForm>
+  <ElRow style="margin: 0 0px 10px">
+    <ElCol gutter="10px">
+      <AddCourse @add-success="queryCourse"/>
     </ElCol>
   </ElRow>
   <ElRow>
@@ -23,8 +19,9 @@
 </template>
 <script setup lang="ts">
 import { apiCourseList } from '@/api';
+import AddCourse from '@/components/AddCourse.vue';
 import type { ModalCourse } from 'common';
-import { ElForm, ElFormItem, ElInput, ElTable, ElTableColumn } from 'element-plus';
+import { ElTable, ElTableColumn } from 'element-plus';
 import { keys } from 'lodash';
 import { computed, onMounted, reactive } from 'vue';
 const state = reactive<{tableData: ModalCourse[]}>({
@@ -39,11 +36,14 @@ const tableColumns = computed(() => {
     label: keyName
   }))
 })
-onMounted(() => {
+const queryCourse = () => {
   apiCourseList().then(res => {
     if (res.data.success) {
       state.tableData = res.data.rows;
     }
   })
+}
+onMounted(() => {
+  queryCourse()
 })
 </script>

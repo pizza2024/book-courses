@@ -1,4 +1,3 @@
-import { useLoginStore } from '@/stores/login'
 import AdminView from '@/views/AdminView.vue'
 import PublishedCourseView from '@/views/PublishedCourseView.vue'
 import StudentView from '@/views/StudentView.vue'
@@ -30,10 +29,10 @@ const router = createRouter({
       path: '/admin',
       name: 'admin',
       component: AdminView,
-      beforeEnter(to, from) {
-        const login = useLoginStore()
-        return login.loginType === 'admin'
-      }
+      // beforeEnter(to, from) {
+      //   const login = useLoginStore()
+      //   return login.loginType === 'admin'
+      // }
     },
     {
       path: '/student',
