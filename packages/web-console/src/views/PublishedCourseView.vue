@@ -16,19 +16,18 @@
             <el-icon v-if="scope.row.is_active === 1"><Check /></el-icon>
             <el-icon v-else><Close /></el-icon>
           </template>
-
         </ElTableColumn>
       </ElTable>
     </ElCol>
   </ElRow>
 </template>
 <script setup lang="ts">
-import { apiStudentList } from '@/api';
-import type { ModalStudent } from 'common';
+import { apiPublishedCourseList } from '@/api';
+import type { ModalPublishedCourse } from 'common';
 import { ElForm, ElFormItem, ElInput, ElTable, ElTableColumn } from 'element-plus';
 import { keys } from 'lodash';
 import { computed, onMounted, reactive } from 'vue';
-const state = reactive<{tableData: ModalStudent[]}>({
+const state = reactive<{tableData: ModalPublishedCourse[]}>({
   tableData: []
 })
 const tableColumns = computed(() => {
@@ -41,7 +40,7 @@ const tableColumns = computed(() => {
   }))
 })
 onMounted(() => {
-  apiStudentList().then(res => {
+  apiPublishedCourseList().then(res => {
     if (res.data.success) {
       state.tableData = res.data.rows;
     }

@@ -1,6 +1,9 @@
 
-import type { LoginData, User } from "common";
+import type { LoginData, ModalAdmin, ModalCourse, ModalPublishedCourse, ModalStudent, ModalTeacher } from "common";
 import request from "./request";
 export const apiLogin = (data: LoginData) => request.post('/api/login', data)
-export const apiUserList = () => request.get<{ success: boolean; users: User[] }>('/api/users')
-export const apiAdminList = () => request.get<{ success: Boolean; rows: any[]}>('/api/admins')
+export const apiAdminList = () => request.get<{ success: Boolean; rows: ModalAdmin[] }>('/api/adminlist')
+export const apiStudentList = () => request.get<{ success: Boolean; rows: ModalStudent[] }>('/api/studentlist')
+export const apiTeacherList = () => request.get<{ success: Boolean;  rows: ModalTeacher[]}>('/api/teacherlist')
+export const apiCourseList = () => request.get<{ success: Boolean;  rows: ModalCourse[]}>('/api/courselist')
+export const apiPublishedCourseList = () => request.get<{ success: Boolean;  rows: ModalPublishedCourse[]}>('/api/publishedCourseList')

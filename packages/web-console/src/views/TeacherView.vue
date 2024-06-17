@@ -23,12 +23,12 @@
   </ElRow>
 </template>
 <script setup lang="ts">
-import { apiUserList, type User } from '@/api';
+import { apiTeacherList } from '@/api';
+import type { ModalTeacher } from 'common';
 import { ElForm, ElFormItem, ElInput, ElTable, ElTableColumn } from 'element-plus';
 import { keys } from 'lodash';
-import moment from 'moment';
 import { computed, onMounted, reactive } from 'vue';
-const state = reactive<{tableData: User[]}>({
+const state = reactive<{tableData: ModalTeacher[]}>({
   tableData: []
 })
 const tableColumns = computed(() => {
@@ -41,14 +41,9 @@ const tableColumns = computed(() => {
   }))
 })
 onMounted(() => {
-  apiUserList().then(res => {
+  apiTeacherList().then(res => {
     if (res.data.success) {
-      state.tableData = res.data.users.map(user => {
-        return {
-          ...user,
-          birthdate: moment(user.birthdate).utcOffset(8).format('YYYY-MM-DD HH:mm:ss')
-        }
-      });
+      state.tableData = res.data.rows;
     }
   })
 })

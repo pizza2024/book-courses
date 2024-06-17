@@ -1,11 +1,11 @@
 import { NextFunction, Response } from "express";
 import { Request } from "express-jwt";
-import { queryTeacher } from "../db";
+import { queryCourse } from "../db";
 import AuthController from "./AuthController";
 
-class TeacherController extends AuthController {
+class CourseListController extends AuthController {
   get(req: Request, res: Response<any, Record<string, any>>, next: NextFunction): void {
-    queryTeacher().then(rows => {
+    queryCourse().then(rows => {
       res.json({
         success: true,
         rows
@@ -27,4 +27,4 @@ class TeacherController extends AuthController {
     throw new Error("Method not implemented.");
   }
 }
-export default TeacherController
+export default CourseListController
