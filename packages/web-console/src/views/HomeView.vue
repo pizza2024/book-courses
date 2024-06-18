@@ -3,7 +3,6 @@ import { apiPublishedCourseList } from '@/api';
 import { useLoginStore } from '@/stores/login';
 import { ElCol, ElLink, ElRow } from 'element-plus';
 import { forEach } from 'lodash';
-import moment from 'moment';
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 const router = useRouter()
@@ -20,6 +19,8 @@ const attributes = ref<{
   customData: {
     title: string;
     class: string;
+    bgColor: string;
+    textColor: string;
   },
   dates: Date | Date[]
 }[]>([
@@ -97,32 +98,51 @@ const attributes = ref<{
   // },
 ]);
 onMounted(() => {
+  function getRandomColorAndComplement() {
+    // 生成一个随机的主色调 (HSL 模型中的色调部分，范围为0-360)
+    const mainHue = Math.floor(Math.random() * 360);
+    
+    // 饱和度和亮度可以固定为某些值，也可以随机生成
+    const saturation = 40; // 固定为70%
+    const lightness = 40; // 固定为50%
+
+    // 计算互补色的色调
+    const complementaryHue = (mainHue + 180) % 360;
+
+    // 将HSL转换为CSS颜色字符串
+    const mainColor = `hsl(${mainHue}, ${saturation}%, ${lightness}%)`;
+    const complementaryColor = `hsl(${complementaryHue}, ${saturation}%, ${lightness}%)`;
+
+    return {
+        mainColor,
+        complementaryColor
+    };
+}
   apiPublishedCourseList().then(res => {
     if (res.data.success) {
       const courses = res.data.rows;
       attributes.value = []
       forEach(courses, (x, index) => {
-        console.log(x)
-        const _launchTime = moment(x.launchTime);
-        const _removeTime = moment(x.removeTime);
-        let _current = _launchTime
-        while (_current.isBefore(_removeTime)) {
-          attributes.value.push({
-            key: `${index}:${x.courseName}`,
+        const colors = getRandomColorAndComplement()
+        const classInfo = `text-gray-100`;
+        attributes.value.push({
+          key: `${x.courseId}:${x.teacherId}:${index}`,
             customData: {
               title: x.courseName,
-              class: 'bg-red-500 text-white'
+              class: classInfo,
+              bgColor: colors.mainColor,
+              textColor: colors.complementaryColor
             },
-            dates: _current.toDate()
-          })
-          _current = _current.add(1,'days')
-        }
+            dates: new Date(x.startTime)
+        })
+        
         
       })
     }
 
   })
 })
+const date = ref(new Date('2024-08-15'))
 </script>
 
 <template>
@@ -134,19 +154,22 @@ onMounted(() => {
   </ElRow>
   <ElRow>
     <ElCol :span="24">
-      <VCalendar :attributes="attributes" expanded class="custom-calendar max-w-full">
+      <VCalendar v-model="date" :attributes="attributes" class="custom-calendar max-w-full" color="sky-blue" expanded>
         <template v-slot:day-content="{ day, attributes }">
-          <div class="flex flex-col h-full z-10 overflow-hidden">
-            <span class="day-label text-sm text-gray-900">{{ day.day }}</span>
-            <div class="flex-grow overflow-y-auto overflow-x-auto">
-              <p
-                v-for="attr in attributes"
-                :key="attr.key"
-                class="text-xs leading-tight rounded-sm p-1 mt-0 mb-1"
-                :class="attr.customData.class"
-              >
-                {{ attr.customData.title }}
-              </p>
+          <div class="flex flex-col h-full z-10 overflow-hidden p-1">
+            <div class="border border-1 rounded p-1">
+              <div class="px-1">{{ day.day }}</div>
+              <div class="flex-grow overflow-y-auto overflow-x-auto h-[100px]">
+                <p
+                  v-for="attr in attributes"
+                  :key="attr.key"
+                  class="text-[1rem] leading-tight rounded-sm mb-1 p-1 font-bold"
+                  :class="attr.customData.class"
+                  :style="{backgroundColor: attr.customData.bgColor, color: '#FFF', }"
+                >
+                  {{ attr.customData.title }}
+                </p>
+              </div>
             </div>
           </div>
         </template>
@@ -154,54 +177,27 @@ onMounted(() => {
     </ElCol>
   </ElRow>
 </template>
+<style scoped>
+::-webkit-scrollbar {
+  width: 0px;
+}
 
-<style lang="scss" scoped>
-.custom-calendar.vc-container {
-  --day-border: 1px solid #b8c2cc;
-  --day-border-highlight: 1px solid #b8c2cc;
-  --day-width: 90px;
-  --day-height: 90px;
-  --weekday-bg: #f8fafc;
-  --weekday-border: 1px solid #eaeaea;
-
-  border-radius: 0;
-  width: 100%;
-
-  & .vc-header {
-    background-color: #f1f5f8;
-    padding: 10px 0;
-  }
-  & .vc-weeks {
-    padding: 0;
-  }
-  & .vc-weekday {
-    background-color: var(--weekday-bg);
-    border-bottom: var(--weekday-border);
-    border-top: var(--weekday-border);
-    padding: 5px 0;
-  }
-  & .vc-day {
-    padding: 0 5px 3px 5px;
-    text-align: left;
-    height: var(--day-height);
-    min-width: var(--day-width);
-    background-color: white;
-    &.weekday-1,
-    &.weekday-7 {
-      background-color: #eff8ff;
-    }
-    &:not(.on-bottom) {
-      border-bottom: var(--day-border);
-      &.weekday-1 {
-        border-bottom: var(--day-border-highlight);
-      }
-    }
-    &:not(.on-right) {
-      border-right: var(--day-border);
-    }
-  }
-  & .vc-day-dots {
-    margin-bottom: 5px;
-  }
+::-webkit-scrollbar-track {
+  display: none;
+}
+.custom-calendar :deep(.vc-weekday-1, .vc-weekday-7) {
+  color: #6366f1;
+}
+.vc-sky-blue {
+  --vc-accent-50: #f0f9ff;
+  --vc-accent-100: #e0f2fe;
+  --vc-accent-200: #bae6fd;
+  --vc-accent-300: #7dd3fc;
+  --vc-accent-400: #38bdf8;
+  --vc-accent-500: #0ea5e9;
+  --vc-accent-600: #0284c7;
+  --vc-accent-700: #0369a1;
+  --vc-accent-800: #075985;
+  --vc-accent-900: #0c4a6e;
 }
 </style>

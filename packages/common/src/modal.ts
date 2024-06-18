@@ -14,13 +14,13 @@ export type ModalCourse = {
   adminId: number
 }
 export type ModalPublishedCourse = {
+  id: number;
   courseId: number;
   teacherId: number;
-  location: string;
+  classRoom: string;
   startTime: string;
   endTime: string;
-  launchTime: string;
-  removeTime: string;
-  repeat: string;
-  active: boolean
+  isOpen: boolean;
+  canJoin: boolean;
+  adminId: number;
 }

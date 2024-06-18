@@ -1,5 +1,4 @@
 import { forEach } from 'lodash';
-import moment from 'moment';
 import mysql from 'mysql2';
 import pool from "./src/db/connection-pool";
 const dropTables = async () => {
@@ -69,17 +68,16 @@ const createTables = async () => {
       FOREIGN KEY (adminId) REFERENCES admin(id)
     )`);
     await connection.query(`create table if not exists publishedCourse (
+      id int NOT NULL AUTO_INCREMENT,
       courseId int NOT NULL,
       teacherId int NOT NULL,
       classRoom varchar(50),
-      daytime json,
-      launchTime date,
-      removeTime date,
-      repeatDay varchar(7),
+      startTime DATETIME,
+      endTime DATETIME,
       isOpen boolean,
       canJoin boolean,
       adminId int,
-      PRIMARY KEY (courseId, teacherId),
+      PRIMARY KEY (id),
       FOREIGN KEY (adminId) REFERENCES admin(id),
       FOREIGN KEY (courseId) REFERENCES course(id),
       FOREIGN KEY (teacherId) REFERENCES teacher(id)
@@ -150,13 +148,18 @@ const insertDatas = async () => {
         courseId: 1,
         teacherId: 1,
         classRoom: 'classRoom1',
-        daytime: JSON.stringify([
-          { startTime: '08:00:00', endTime: '08:45:00' },
-          { startTime: '18:00:00', endTime: '18:45:00' }
-        ]),
-        launchTime: moment(new Date('2024-03-01')).format('YYYY-MM-DD HH:mm:ss'),
-        removeTime: moment(new Date('2024-08-01')).format('YYYY-MM-DD HH:mm:ss'),
-        repeatDay: '1111100',
+        startTime: new Date('2024-06-01 08:00:00'),
+        endTime: new Date('2024-06-01 08:45:00'),
+        isOpen: true,
+        canJoin: true,
+        adminId: 1
+      },
+      {
+        courseId: 1,
+        teacherId: 1,
+        classRoom: 'classRoom1',
+        startTime: new Date('2024-06-01 18:00:00'),
+        endTime: new Date('2024-06-01 20:45:00'),
         isOpen: true,
         canJoin: true,
         adminId: 1
@@ -165,13 +168,8 @@ const insertDatas = async () => {
         courseId: 1,
         teacherId: 2,
         classRoom: 'classRoom1',
-        daytime: JSON.stringify([
-          { startTime: '08:00:00', endTime: '08:45:00' },
-          { startTime: '18:00:00', endTime: '18:45:00' }
-        ]),
-        launchTime: moment(new Date('2024-03-01')).format('YYYY-MM-DD HH:mm:ss'),
-        removeTime: moment(new Date('2024-08-01')).format('YYYY-MM-DD HH:mm:ss'),
-        repeatDay: '1111100',
+        startTime: new Date('2024-06-02 08:00:00'),
+        endTime: new Date('2024-06-02 08:45:00'),
         isOpen: true,
         canJoin: true,
         adminId: 1
@@ -180,13 +178,8 @@ const insertDatas = async () => {
         courseId: 2,
         teacherId: 1,
         classRoom: 'classRoom2',
-        daytime: JSON.stringify([
-          { startTime: '08:00:00', endTime: '08:45:00' },
-          { startTime: '18:00:00', endTime: '18:45:00' }
-        ]),
-        launchTime: moment(new Date('2024-03-01')).format('YYYY-MM-DD HH:mm:ss'),
-        removeTime: moment(new Date('2024-08-01')).format('YYYY-MM-DD HH:mm:ss'),
-        repeatDay: '1111100',
+        startTime: new Date('2024-06-03 14:00:00'),
+        endTime: new Date('2024-06-03 15:45:00'),
         isOpen: true,
         canJoin: true,
         adminId: 1
@@ -195,13 +188,8 @@ const insertDatas = async () => {
         courseId: 3,
         teacherId: 2,
         classRoom: 'classRoom3',
-        daytime: JSON.stringify([
-          { startTime: '08:00:00', endTime: '08:45:00' },
-          { startTime: '18:00:00', endTime: '18:45:00' }
-        ]),
-        launchTime: moment(new Date('2024-03-01')).format('YYYY-MM-DD HH:mm:ss'),
-        removeTime: moment(new Date('2024-08-01')).format('YYYY-MM-DD HH:mm:ss'),
-        repeatDay: '1111100',
+        startTime: new Date('2024-06-08 18:00:00'),
+        endTime: new Date('2024-06-08 20:45:00'),
         isOpen: true,
         canJoin: true,
         adminId: 1
@@ -210,13 +198,8 @@ const insertDatas = async () => {
         courseId: 4,
         teacherId: 3,
         classRoom: 'classRoom4',
-        daytime: JSON.stringify([
-          { startTime: '08:00:00', endTime: '08:45:00' },
-          { startTime: '18:00:00', endTime: '18:45:00' }
-        ]),
-        launchTime: moment(new Date('2024-03-01')).format('YYYY-MM-DD HH:mm:ss'),
-        removeTime: moment(new Date('2024-08-01')).format('YYYY-MM-DD HH:mm:ss'),
-        repeatDay: '1111100',
+        startTime: new Date('2024-06-18 18:00:00'),
+        endTime: new Date('2024-06-20 07:45:00'),
         isOpen: true,
         canJoin: true,
         adminId: 1

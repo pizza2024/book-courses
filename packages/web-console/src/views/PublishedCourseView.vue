@@ -23,11 +23,12 @@
 </template>
 <script setup lang="ts">
 import { apiPublishedCourseList } from '@/api';
-import type { ModalPublishedCourse } from 'common';
+import type { TypePublishedCourse } from 'common';
 import { ElForm, ElFormItem, ElInput, ElTable, ElTableColumn } from 'element-plus';
 import { keys } from 'lodash';
+import moment from 'moment';
 import { computed, onMounted, reactive } from 'vue';
-const state = reactive<{tableData: ModalPublishedCourse[]}>({
+const state = reactive<{tableData: TypePublishedCourse[]}>({
   tableData: []
 })
 const tableColumns = computed(() => {
@@ -42,7 +43,13 @@ const tableColumns = computed(() => {
 onMounted(() => {
   apiPublishedCourseList().then(res => {
     if (res.data.success) {
-      state.tableData = res.data.rows;
+      state.tableData = res.data.rows.map(x => {
+        return {
+          ...x,
+          startTime: moment(x.startTime).format('yyyy-MM-DD HH:mm:ss'),
+          endTime: moment(x.endTime).format('yyyy-MM-DD HH:mm:ss')
+        }
+      });
     }
   })
 })

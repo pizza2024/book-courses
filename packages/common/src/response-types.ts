@@ -1,11 +1,14 @@
 
 export type TypePublishedCourse = {
-  adminName: string;
-  canJoin: boolean;
-  classRoom: string;
+  id: number;
+  courseId: number;
+  teacherId: number;
   courseName: string;
+  classRoom: string;
+  canJoin: boolean;
   isOpen: boolean;
-  launchTime: string;
-  removeTime: string;
+  startTime: string;
+  endTime: string;
   teacherName: string;
+  adminName: string;
 }
