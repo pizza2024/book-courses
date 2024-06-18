@@ -7,6 +7,16 @@ export const apiPostStudent = (data: FormStudentType) => request.post<{ success:
 export const apiStudentList = () => request.get<{ success: Boolean; rows: ModalStudent[] }>('/api/studentlist')
 export const apiTeacherList = () => request.get<{ success: Boolean;  rows: ModalTeacher[]}>('/api/teacherlist')
 export const apiPostTeacher = (data: FormTeacherType) => request.post<{ success: Boolean; teacher: ModalTeacher }>('/api/teacher', data)
+export const apiQueryTeachersByName = (teacherName: string) => request.get<{ success: boolean; teachers: ModalTeacher[] }>('/api/teacher', {
+  params: {
+    teacherName: teacherName
+  }
+})
 export const apiCourseList = () => request.get<{ success: Boolean;  rows: ModalCourse[]}>('/api/courselist')
 export const apiPostCourse = (data: FormCourseType) => request.post<{ success: Boolean; course: ModalCourse }>('/api/course', data)
+export const apiQueryCourseByName = (courseName: string) => request.get<{ success: Boolean; courses: ModalCourse[] }>('/api/course', {
+  params: {
+    courseName: courseName
+  }
+});
 export const apiPublishedCourseList = () => request.get<{ success: Boolean;  rows: TypePublishedCourse[]}>('/api/publishedCourseList')

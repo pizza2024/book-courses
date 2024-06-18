@@ -1,12 +1,29 @@
 import { NextFunction, Response } from "express";
 import { Request } from "express-jwt";
 import { get, isArray } from "lodash";
-import { queryPostCourse } from "../db";
+import { queryCourseByName, queryPostCourse } from "../db";
 import AuthController from "./AuthController";
 
 class CourseController extends AuthController {
   get(req: Request, res: Response<any, Record<string, any>>, next: NextFunction): void {
-    throw new Error("Method not implemented.");
+    queryCourseByName(req.query.courseName as string).then(result => {
+      if (isArray(result)) {
+        res.json({
+          success: true,
+          courses: result
+        })
+      } else {
+        res.json({
+          success: true,
+          courses: []
+        })
+      }
+    }).catch(e => {
+      res.json({
+        success: false,
+        msg: e.toString()
+      })
+    })
   }
   post(req: Request, res: Response<any, Record<string, any>>, next: NextFunction): void {
     const adminId = req.auth?.id;

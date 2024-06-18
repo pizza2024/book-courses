@@ -1,11 +1,7 @@
 <template>
-  <ElRow>
+  <ElRow style="margin-bottom: 10px;">
     <ElCol :span="12">
-      <ElForm>
-        <ElFormItem>
-          <ElInput></ElInput>
-        </ElFormItem>
-      </ElForm>
+      <PublishCourse/>
     </ElCol>
   </ElRow>
   <ElRow>
@@ -23,8 +19,9 @@
 </template>
 <script setup lang="ts">
 import { apiPublishedCourseList } from '@/api';
+import PublishCourse from '@/components/PublishCourse.vue';
 import type { TypePublishedCourse } from 'common';
-import { ElForm, ElFormItem, ElInput, ElTable, ElTableColumn } from 'element-plus';
+import { ElTable, ElTableColumn } from 'element-plus';
 import { keys } from 'lodash';
 import moment from 'moment';
 import { computed, onMounted, reactive } from 'vue';

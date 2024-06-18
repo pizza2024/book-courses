@@ -53,6 +53,10 @@ export const queryPostTeacher = async (data: ModalTeacher) => {
     return e
   }
 }
+export const queryTeachersByName = async (teacherName: string) => {
+  const [res] = await pool.query('select * from teacher where username like "%' + teacherName + '%"');
+  return res
+}
 export const queryCourse = async () => {
   const [res] = await pool.query(`select * from course`)
   return res;
@@ -89,5 +93,9 @@ export const queryPublishedCourse = async () => {
   inner join course as c on p.courseId = c.id
   inner join admin as a on p.adminId = a.id
     `)
+  return res;
+}
+export const queryCourseByName = async (courseName: string) => {
+  const [res] = await pool.query(`select * from course where name like "%${courseName}%"`);
   return res;
 }
