@@ -6,10 +6,10 @@ import { reactive, ref } from 'vue';
 
 const emit = defineEmits(['addSuccess'])
 const dialogFormVisible = ref(false)
-const DEFAULT_FORM_COURSE: FormCourseType = {
-  name: undefined
+const DEFAULT_FORM_COURSE: Omit<FormCourseType, 'adminId'> = {
+  name: ''
 }
-const formCourse = reactive<FormCourseType>(DEFAULT_FORM_COURSE)
+const formCourse = reactive<Omit<FormCourseType, 'adminId'>>(DEFAULT_FORM_COURSE)
 const formCourseRules = reactive<FormRules<typeof formCourse>>({
   name: [{ required: true, message: '请输入课程名', trigger: 'change' }],
 })

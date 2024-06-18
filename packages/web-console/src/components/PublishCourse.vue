@@ -58,7 +58,7 @@
   </ElDialog>
 </template>
 <script setup lang="ts">
-import { apiQueryCourseByName, apiQueryTeachersByName } from '@/api';
+import { apiPublishCourses, apiQueryCourseByName, apiQueryTeachersByName } from '@/api';
 import type { ModalCourse, ModalPublishedCourse, ModalTeacher } from 'common';
 import { ElForm, ElFormItem, ElInput, type FormInstance, type FormRules } from 'element-plus';
 import moment from 'moment';
@@ -93,9 +93,9 @@ const rules = reactive<FormRules<RuleForm>>({
   ],
   startTime: [{required: true, trigger: 'change'}],
   endTime: [{required: true, trigger: 'change'}],
-  dateRange: [{type: 'array',required: true, trigger: 'change'}],
-  isEveryDay: [{required: true, trigger: 'change'}],
-  checkedDays: [{required: true, trigger: 'change'}],
+  // dateRange: [{type: 'array',required: true, trigger: 'change'}],
+  // isEveryDay: [{required: true, trigger: 'change'}],
+  // checkedDays: [{required: true, trigger: 'change'}],
 })
 const modalVisible = ref(false)
 const openModal = () => {
@@ -148,30 +148,48 @@ const publisCourse = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   formEl.validate().then(res => {
     console.log(formData.value)
-    const [startDate, endDate] = formData.value.dateRange || [];
-    const _startDate = moment(startDate);
-    const _endDate = moment(endDate);
+    const dateRange = formData.value.dateRange || [];
+    const now = Date.now();
+    const _startDate = moment(dateRange[0] || now);
+    const _endDate = moment(dateRange[1] || now);
     const isEveryDay = formData.value.isEveryDay;
     const checkedDays = formData.value.checkedDays;
     const _indexDate = _startDate.clone();
     const prepublishCourses: Omit<Omit<ModalPublishedCourse, 'id'>, 'adminId'>[] = [];
-    while (_indexDate.isSameOrBefore(_endDate)) {
-      _indexDate.add(1, 'day');
-      if (isEveryDay || checkedDays.includes(_indexDate.weekday() as any)) {
-        const startTime = moment(_indexDate.format('YYYY-MM-DD') + ' ' + formData.value.startTime)
-        const endTime = moment(_indexDate.format('YYYY-MM-DD') + ' ' + formData.value.endTime)
-        prepublishCourses.push({
-          courseId: formData.value.courseId as number,
-          teacherId: formData.value.teacherId as number,
-          classRoom: formData.value.classRoom || '',
-          startTime: startTime.format('YYYY-MM-DD HH:mm:ss'),
-          endTime: endTime.format('YYYY-MM-DD HH:mm:ss'),
-          isOpen: true,
-          canJoin: true,
-        })
+    if (!isEveryDay && !isIndeterminate.value) {
+      const startTime = moment(_indexDate.format('YYYY-MM-DD') + ' ' + formData.value.startTime)
+      const endTime = moment(_indexDate.format('YYYY-MM-DD') + ' ' + formData.value.endTime)
+      prepublishCourses.push({
+        courseId: formData.value.courseId as number,
+        teacherId: formData.value.teacherId as number,
+        classRoom: formData.value.classRoom || '',
+        startTime: startTime.format('YYYY-MM-DD HH:mm:ss'),
+        endTime: endTime.format('YYYY-MM-DD HH:mm:ss'),
+        isOpen: true,
+        canJoin: true,
+      })
+    } else {
+      while (_indexDate.isSameOrBefore(_endDate)) {
+        if ((isIndeterminate.value && checkedDays.includes(_indexDate.weekday() as any)) || isEveryDay) {
+          const startTime = moment(_indexDate.format('YYYY-MM-DD') + ' ' + formData.value.startTime)
+          const endTime = moment(_indexDate.format('YYYY-MM-DD') + ' ' + formData.value.endTime)
+          prepublishCourses.push({
+            courseId: formData.value.courseId as number,
+            teacherId: formData.value.teacherId as number,
+            classRoom: formData.value.classRoom || '',
+            startTime: startTime.format('YYYY-MM-DD HH:mm:ss'),
+            endTime: endTime.format('YYYY-MM-DD HH:mm:ss'),
+            isOpen: true,
+            canJoin: true,
+          })
+        }
+        _indexDate.add(1, 'day');
       }
     }
     console.log(prepublishCourses)
+    apiPublishCourses(prepublishCourses).then(res => {
+      console.log('res is', res)
+    })
   })
 }
 const resetForm = (formEl: FormInstance | undefined) => {

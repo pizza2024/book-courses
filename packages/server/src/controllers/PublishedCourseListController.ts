@@ -1,6 +1,6 @@
 import { NextFunction, Response } from "express";
 import { Request } from "express-jwt";
-import { queryPublishedCourse } from "../db";
+import { insertPublishedCourses, queryPublishedCourse } from "../db";
 import AuthController from "./AuthController";
 
 class PublishedCourseListController extends AuthController {
@@ -18,7 +18,18 @@ class PublishedCourseListController extends AuthController {
     })
   }
   post(req: Request, res: Response<any, Record<string, any>>, next: NextFunction): void {
-    throw new Error("Method not implemented.");
+    console.log(req.body)
+    insertPublishedCourses(req.body.courses).then(result => {
+      res.json({
+        success: true,
+        result
+      })
+    }).catch(e => {
+      res.json({
+        success: false, msg: e.toString()
+      })
+    })
+    
   }
   put(req: Request, res: Response<any, Record<string, any>>, next: NextFunction): void {
     throw new Error("Method not implemented.");

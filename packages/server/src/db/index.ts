@@ -1,4 +1,4 @@
-import { FormCourseType, ModalStudent, ModalTeacher } from "common";
+import { FormCourseType, ModalPublishedCourse, ModalStudent, ModalTeacher } from "common";
 import pool from "./connection-pool";
 export const queryAdmin = async () => {
   const [res] = await pool.query(`select a.username, a.email, r.name from admin as a, adminRole as r where a.adminRoleId = r.id`)
@@ -89,13 +89,31 @@ export const queryPublishedCourse = async () => {
     p.teacherId
   from
     publishedCourse as p
-  inner join teacher as t on p.teacherId = t.id
-  inner join course as c on p.courseId = c.id
-  inner join admin as a on p.adminId = a.id
+  left join teacher as t on p.teacherId = t.id
+  left join course as c on p.courseId = c.id
+  left join admin as a on p.adminId = a.id
     `)
   return res;
 }
 export const queryCourseByName = async (courseName: string) => {
   const [res] = await pool.query(`select * from course where name like "%${courseName}%"`);
   return res;
+}
+export const insertPublishedCourses = async (courses: Omit<ModalPublishedCourse, 'id'>[]) => {
+  const connection = await pool.getConnection();
+  try {
+    await connection.beginTransaction()
+    const result = []
+    for (let x of courses) {
+      const res = await connection.query('insert into publishedCourse set ?', x)
+      result.push(res)
+    }
+    const res = await connection.commit()
+    connection.release();
+    return res
+  } catch (e) {
+    await connection.rollback();
+    connection.release();
+    return e
+  }
 }
