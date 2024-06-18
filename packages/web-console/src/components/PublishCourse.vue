@@ -1,7 +1,7 @@
 <template>
   <ElButton @click="openModal">Publish Course</ElButton>
   <ElDialog v-model="modalVisible" title="Publish Course">
-    <ElForm ref="formRef" :modal="formData" :rules="rules">
+    <ElForm ref="formRef" :model="formData" :rules="rules" labelWidth="100px">
       <ElFormItem label="course" prop="courseId">
         <ElSelect placeholder="search course" v-model="formData.courseId" remote :remoteMethod="queryCourseByName" filterable clearable>
           <ElOption
@@ -23,7 +23,7 @@
         </ElSelect>
       </ElFormItem>
       <ElFormItem label="classRoom" prop="classRoom">
-        <ElInput v-model="formData.classRoom" prop="classRoom"></ElInput>
+        <ElInput v-model="formData.classRoom" clearable></ElInput>
       </ElFormItem>
       <ElFormItem label="startTime" prop="startTime">
         <ElTimeSelect start="07:00" step="00:15" end="23:30" :max-time="formData.endTime" v-model="formData.startTime"/>
@@ -33,7 +33,7 @@
       </ElFormItem>
       <ElFormItem label="dateRange" prop="dateRange">
         <ElDatePicker
-          :model="formData.dateRange"
+          v-model="formData.dateRange"
           type="daterange"
           range-separator="To"
           start-placeholder="Start date"
@@ -49,7 +49,7 @@
         </ElCheckboxGroup>
       </ElFormItem>
       <ElFormItem>
-        <ElButton @click="publisCourse">
+        <ElButton @click="publisCourse(formRef)">
           publish
         </ElButton>
         <ElButton @click="resetForm(formRef)">Reset</ElButton>
@@ -59,8 +59,9 @@
 </template>
 <script setup lang="ts">
 import { apiQueryCourseByName, apiQueryTeachersByName } from '@/api';
-import type { ModalCourse, ModalTeacher } from 'common';
-import { type FormInstance, type FormRules } from 'element-plus';
+import type { ModalCourse, ModalPublishedCourse, ModalTeacher } from 'common';
+import { ElForm, ElFormItem, ElInput, type FormInstance, type FormRules } from 'element-plus';
+import moment from 'moment';
 import { reactive, ref } from 'vue';
 type TypeDays = (1|2|3|4|5|6|7)[]
 interface RuleForm {
@@ -74,27 +75,27 @@ interface RuleForm {
   checkedDays: TypeDays,
 }
 const formRef = ref<FormInstance>()
-const formData = reactive<RuleForm>({
+const formData = ref<RuleForm>({
   courseId: undefined,
   teacherId: undefined,
   classRoom: undefined,
   startTime: undefined,
   endTime: undefined,
-  dateRange: undefined,
+  dateRange: [],
   isEveryDay: false,
   checkedDays: []
 })
 const rules = reactive<FormRules<RuleForm>>({
-  courseId: [{type: 'number',required: true, trigger: 'blur'}],
-  teacherId: [{type: 'number',required: true, trigger: 'blur'}],
+  courseId: [{type: 'number',required: true, trigger: 'change'}],
+  teacherId: [{type: 'number',required: true, trigger: 'change'}],
   classRoom: [
-    { type: 'string',required: true, trigger: 'blur' }
+    { required: true, trigger: 'change' }
   ],
-  startTime: [{required: true, trigger: 'blur'}],
-  endTime: [{required: true, trigger: 'blur'}],
-  dateRange: [{type: 'array',required: true, trigger: 'blur'}],
-  isEveryDay: [{required: true, trigger: 'blur'}],
-  checkedDays: [{required: true, trigger: 'blur'}],
+  startTime: [{required: true, trigger: 'change'}],
+  endTime: [{required: true, trigger: 'change'}],
+  dateRange: [{type: 'array',required: true, trigger: 'change'}],
+  isEveryDay: [{required: true, trigger: 'change'}],
+  checkedDays: [{required: true, trigger: 'change'}],
 })
 const modalVisible = ref(false)
 const openModal = () => {
@@ -133,18 +134,45 @@ const checkboxOptions = ref([
   1,2,3,4,5,6,7
 ])
 const handleCheckAllChange = (val: boolean) => {
-  formData.checkedDays = val ? daysArr : []
+  formData.value.checkedDays = val ? daysArr : []
   isIndeterminate.value = false;
 }
 const handleCheckedCitiesChange = (value: number[]) => {
   const checkedCount = value.length
-  formData.isEveryDay = checkedCount === daysArr.length
+  formData.value.isEveryDay = checkedCount === daysArr.length
   isIndeterminate.value = checkedCount > 0 && checkedCount < daysArr.length
 }
 
 
-const publisCourse = () => {
-  console.log(form)
+const publisCourse = (formEl: FormInstance | undefined) => {
+  if (!formEl) return;
+  formEl.validate().then(res => {
+    console.log(formData.value)
+    const [startDate, endDate] = formData.value.dateRange || [];
+    const _startDate = moment(startDate);
+    const _endDate = moment(endDate);
+    const isEveryDay = formData.value.isEveryDay;
+    const checkedDays = formData.value.checkedDays;
+    const _indexDate = _startDate.clone();
+    const prepublishCourses: Omit<Omit<ModalPublishedCourse, 'id'>, 'adminId'>[] = [];
+    while (_indexDate.isSameOrBefore(_endDate)) {
+      _indexDate.add(1, 'day');
+      if (isEveryDay || checkedDays.includes(_indexDate.weekday() as any)) {
+        const startTime = moment(_indexDate.format('YYYY-MM-DD') + ' ' + formData.value.startTime)
+        const endTime = moment(_indexDate.format('YYYY-MM-DD') + ' ' + formData.value.endTime)
+        prepublishCourses.push({
+          courseId: formData.value.courseId as number,
+          teacherId: formData.value.teacherId as number,
+          classRoom: formData.value.classRoom || '',
+          startTime: startTime.format('YYYY-MM-DD HH:mm:ss'),
+          endTime: endTime.format('YYYY-MM-DD HH:mm:ss'),
+          isOpen: true,
+          canJoin: true,
+        })
+      }
+    }
+    console.log(prepublishCourses)
+  })
 }
 const resetForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
