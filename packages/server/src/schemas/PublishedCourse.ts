@@ -9,20 +9,20 @@ interface IPublishedCourse {
   createdAt?: Date;
   admin?: IAdmin;
   teacher?: ITeacher;
-  course: ICourse;
+  course?: ICourse;
 }
 const PublishedCourseSchema = new Schema<IPublishedCourse>({
   location: String,
   startTime: Date,
   endTime: Date,
   createdAt: Date,
-  teacher: {
-    type: Types.ObjectId,
-    ref: 'Teacher'
-  },
   course: {
     type: Types.ObjectId,
     ref: 'Course'
+  },
+  teacher: {
+    type: Types.ObjectId,
+    ref: 'Teacher'
   },
   admin: {
     type: Types.ObjectId,

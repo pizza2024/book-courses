@@ -3,8 +3,8 @@ import { model, Schema, Types } from "mongoose";
 import { IAdmin } from "./Admin";
 export interface ICourse {
   name: string;
-  createdAt?: Date;
   admin?: IAdmin;
+  createdAt?: Date;
 }
 const CourseSchema = new Schema<ICourse>({
   name: {
