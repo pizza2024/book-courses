@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { apiLogin } from '@/api';
+import { apiLogin, apiRegist } from '@/api';
 import { useLoginStore } from '@/stores/login';
 import { ElButton } from 'element-plus';
 import { computed, reactive } from 'vue';
@@ -42,6 +42,14 @@ function login() {
     }
   })
 }
+function regist() {
+  apiRegist({
+    type: loginType.value,
+    ...data
+  }).then(res => {
+    console.log(res)
+  })
+}
 </script>
 
 <template>
@@ -56,6 +64,7 @@ function login() {
       </el-form-item>
       <el-form-item>
         <el-button :type="'primary'" @click="login">login</el-button>
+        <el-button :type="'default'" @click="regist">regist</el-button>
       </el-form-item>
       <el-form-item v-if="isLoginStudent">
         <RouterLink active-class="link" class="link" to="/login/teacher">teacher login</RouterLink>

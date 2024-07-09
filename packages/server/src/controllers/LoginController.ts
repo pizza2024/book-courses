@@ -1,126 +1,63 @@
-import { LoginData, User } from "common";
 import crypto from 'crypto';
 import { NextFunction, Response } from "express";
 import { Request } from "express-jwt";
 import jwt from 'jsonwebtoken';
-import { get, omit } from "lodash";
-import { queryAdminByUsername, queryStudentByUsername, queryTeacherByUsername } from "../db";
+import Admin from "../schemas/Admin";
+import Student from "../schemas/Student";
+import Teacher from "../schemas/Teacher";
 import AuthController from "./AuthController";
 
 class LoginController extends AuthController {
     get(req: Request, res: Response<any, Record<string, any>>, next: NextFunction): void {
         throw new Error("Method not implemented.");
     }
-    post(req: Request, res: Response<any, Record<string, any>>, next: NextFunction): void {
-        const data: LoginData = req.body;
-        const method = data.type === 'student' ? queryStudentByUsername : data.type === 'teacher' ? queryTeacherByUsername : data.type === 'admin' ? queryAdminByUsername : () => Promise.resolve({
-            success: false,
-            msg: 'unknow login type'
-        })
-        method(data.username).then(result => {
-            const user: User & {password: string} = get(result, 0)
-            if (!user) {
+    async post(req: Request, res: Response<any, Record<string, any>>, next: NextFunction) {
+        let user
+        if (req.body.type === 'student') {
+            user = await Student.findOne({
+                username: req.body.username
+            }).select('+password')
+        } else if (req.body.type === 'teacher') {
+            user = await Teacher.findOne({
+                username: req.body.username
+            }).select('+password')
+        } else if (req.body.type === 'admin') {
+            user = await Admin.findOne({
+                username: req.body.username
+            }).select('+password')
+        }
+        if (!user) {
+            res.json({
+                success: false,
+                msg: '账号未注册'
+            })
+        } else {
+            console.log('user is', user)
+            const pwd = crypto.createHash('sha256').update(req.body.password).digest('hex')
+            if (user && user.password === pwd) {
+                const token = jwt.sign({
+                    username: user.username,
+                    email: user.email,
+                    phone: user.phone,
+                    nickname: user.nickname,
+                    type: req.body.type,
+                }, 'helloworld', {algorithm: 'HS512', expiresIn: 60 * 60 * 8})
                 res.json({
-                    success: false,
-                    msg: '账号未注册'
+                    success: true,
+                    token: token,
+                    username: user.username,
+                    email: user.email,
+                    phone: user.phone,
+                    nickname: user.nickname,
+                    type: req.body.type,
                 })
             } else {
-                const pwd = crypto.createHash('sha256').update(data.password).digest('hex')
-                if (user.password === pwd) {
-                    const token = jwt.sign({
-                        ...omit(user, 'password'),
-                        type: data.type,
-                    }, 'helloworld', {algorithm: 'HS512', expiresIn: 60 * 60 * 8})
-                    res.json({
-                        success: true,
-                        token: token,
-                        ...omit(user, 'password'),
-                        type: data.type,
-                    })
-                } else {
-                    res.json({
-                        success: false,
-                        msg: '登录失败'
-                    })
-                }
+                res.json({
+                    success: false,
+                    msg: '登录失败'
+                })
             }
-        })
-        // if (data.type === 'student') {
-        //     queryStudentByUsername(data.username)
-        // } else if (data.type === 'admin') {
-        //     queryAdminByUsername(data.username).then(result => {
-        //         const admin: (ModalAdmin) & {password: string} = get(result, 0)
-        //         if (!admin) {
-        //             res.json({
-        //                 success: false,
-        //                 msg: '账号未注册'
-        //             })
-        //         } else {
-        //             const pwd = crypto.createHash('sha256').update(data.password).digest('hex')
-        //             if (admin.password === pwd) {
-        //                 const token = jwt.sign({
-        //                     ...omit(admin, 'password')
-        //                 }, 'helloworld', {algorithm: 'HS512', expiresIn: 60 * 60 * 8})
-        //                 res.json({
-        //                     success: true,
-        //                     token: token,
-        //                     ...omit(admin, 'password')
-        //                 })
-        //             } else {
-        //                 res.json({
-        //                     success: false,
-        //                     msg: '登录失败'
-        //                 })
-        //             }
-        //         }
-        //     })
-        // } else if (data.type === 'teacher') {
-        //     queryTeacherByUsername(data.username).then(result => {
-        //         const teacher: (ModalTeacher) & {password: string} = get(result, 0)
-        //         if (!teacher) {
-        //             res.json({
-        //                 success: false,
-        //                 msg: '账号未注册'
-        //             })
-        //         } else {
-        //             const pwd = crypto.createHash('sha256').update(data.password).digest('hex')
-        //             if (teacher.password === pwd) {
-        //                 const token = jwt.sign({
-        //                     ...omit(teacher, 'password')
-        //                 }, 'helloworld', {algorithm: 'HS512', expiresIn: 60 * 60 * 8})
-        //                 res.json({
-        //                     success: true,
-        //                     token: token,
-        //                     ...omit(teacher, 'password')
-        //                 })
-        //             } else {
-        //                 res.json({
-        //                     success: false,
-        //                     msg: '登录失败'
-        //                 })
-        //             }
-        //         }
-        //     })
-        // } else {
-        //     res.json({
-        //         success: false,
-        //         msg: 'unknow login type'
-        //     })
-        // }
-        // if (data.username === 'admin' && data.password === '123') {
-        //     const token = jwt.sign({
-        //         username: data.username
-        //     }, 'helloworld', {algorithm: 'HS512', expiresIn: 60 * 60 * 8})
-        //     res.json({
-        //         success: true,
-        //         token: token,
-        //     })
-        // } else {
-        //     res.json({
-        //         success: false,
-        //         msg: '登录失败'
-        //     })
-        // }
+        }
     }
     put(req: Request, res: Response<any, Record<string, any>>, next: NextFunction): void {
         throw new Error("Method not implemented.");

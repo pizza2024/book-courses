@@ -5,6 +5,7 @@ import CourseController from '../controllers/CourseController';
 import CourseListController from "../controllers/CourseListController";
 import LoginController from "../controllers/LoginController";
 import PublishedCourseListController from "../controllers/PublishedCourseListController";
+import RegistController from '../controllers/RegistController';
 import StudentController from '../controllers/StudentController';
 import StudentListController from "../controllers/StudentListController";
 import TeacherController from "../controllers/TeacherController";
@@ -22,6 +23,7 @@ const onlyAdmin = (types: ('admin' | 'teacher' | 'student')[]) => [(req: Request
 }]
 const routes = [
     new Route('/api/login', new LoginController()),
+    new Route('/api/regist', new RegistController()),
     new Route('/api/adminlist', new AdminListController(), onlyAdmin(["admin"])),
     new Route('/api/teacher', new TeacherController(), onlyAdmin(['admin'])),
     new Route('/api/teacherlist', new TeacherListController(), onlyAdmin(['admin'])),

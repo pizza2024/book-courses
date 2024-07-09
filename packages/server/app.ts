@@ -3,27 +3,31 @@ import cors from 'cors';
 import express, { NextFunction, Response } from 'express';
 import { Request, expressjwt } from 'express-jwt';
 import { each } from 'lodash';
+import getConnection from './src/db/connection-mongo';
 import routes from './src/routes';
 
 const port = 3000;
 
 const app = express();
-
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
+
+app.use('/api', async (req, res, next) => {
+  await getConnection()
+  next();
+})
 
 app.use('/api', expressjwt({
   secret: 'helloworld',
   algorithms: ['HS512'],
 }).unless({
-  path: [/^\/api\/login/]
+  path: [/^\/api\/login/,/^\/api\/regist/]
 }))
 
 each(routes, route => {
   app.use(route.getRoute())
 })
-
 app.use((req, res) => {
   res.status(404).json({
     success: false,
