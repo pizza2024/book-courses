@@ -1,7 +1,7 @@
 
 import { model, Schema, Types } from "mongoose";
 import { IAdmin } from "./Admin";
-interface ICourse {
+export interface ICourse {
   name: string;
   createdAt?: Date;
   admin?: IAdmin;

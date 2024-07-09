@@ -1,10 +1,10 @@
 
 import { model, Schema } from "mongoose";
-interface ITeacher {
+export interface ITeacher {
   username?: string;
   password?: string;
   nickname?: string;
-  TeacherRole?: string;
+  teacherRole?: string;
   email?: string;
   phone?: string;
   createdAt?: Date;
@@ -21,7 +21,7 @@ const TeacherSchema = new Schema<ITeacher>({
     select: false
   },
   nickname: String,
-  TeacherRole: String,
+  teacherRole: String,
   email: String,
   phone: String,
   createdAt: Date

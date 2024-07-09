@@ -277,6 +277,7 @@ import { map } from "lodash";
 import getConnection from "./src/db/connection-mongo";
 import Admin from "./src/schemas/Admin";
 import Course from "./src/schemas/Course";
+import PublishedCourse from "./src/schemas/PublishedCourse";
 import Student from "./src/schemas/Student";
 import Teacher from "./src/schemas/Teacher";
 
@@ -296,6 +297,7 @@ async function main() {
   await initStudent();
   await initTeacher();
   await initCourse();
+  await initPublishedCourse();
   process.exit(0);
 }
 try {
@@ -354,11 +356,37 @@ async function initCourse() {
   const courses = map(new Array(10).fill(1), (x, index) => {
     const course = new Course({
       name: `course${index + 1}`,
-      admin: admins[index]
+      admin: admins[index],
+      createdAt: Date.now()
     })
     return course
   })
   await Course.insertMany(courses)
   const results = await Course.find({}).populate('admin')
+  console.log('results is:', results)
+}
+
+async function initPublishedCourse() {
+  await PublishedCourse.collection.drop();
+  const admins = await Admin.find({});
+  const teachers = await Teacher.find({});
+  const courses = await Course.find({});
+  const list = map(new Array(10).fill(1), (x, index) => {
+    const publishedCourse = new PublishedCourse({
+      location: `location${index + 1}`,
+      startTime: new Date(),
+      endTime: new Date(),
+      createdAt: new Date(),
+      teacher: teachers[index],
+      course: courses[index],
+      admin: admins[index]
+    })
+    return publishedCourse
+  })
+  await PublishedCourse.insertMany(list)
+  const results = await PublishedCourse.find({})
+    .populate('admin', '-username -createdAt -adminRole')
+    .populate('teacher', '-username -createdAt')
+    .populate('course', '-createdAt -admin')
   console.log('results is:', results)
 }
