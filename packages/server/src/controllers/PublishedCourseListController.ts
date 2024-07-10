@@ -1,12 +1,12 @@
 import { NextFunction, Response } from "express";
 import { Request } from "express-jwt";
-import AuthController from "./AuthController";
 import PublishedCourse from "../schemas/PublishedCourse";
+import AuthController from "./AuthController";
 
 class PublishedCourseListController extends AuthController {
   async get(req: Request, res: Response, next: NextFunction) {
     const rows = await PublishedCourse.find({})
-      // .populate('admin', '-username -createdAt -adminRole')
+      .populate('admin', '-username -createdAt -adminRole')
       .populate('teacher', '-username -createdAt')
       .populate('course', 'name');
       
